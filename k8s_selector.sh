@@ -39,27 +39,27 @@ function get_k9s {
     online_ver=$(echo $k9s_latest | awk -F'/' '{print $6}')
     current_ver=$(k9s version | awk 'NR==8 {print $2}')
     if [[ $online_ver != $current_ver && $1 == "" ]]; then
-        echo "New version is ${online_ver} you have ${current_ver}"
-        file_name=$(echo $k9s_latest | awk -F'/' '{print $7}')
-        wget https://github.com${k9s_latest} -O /tmp/${file_name}
-        tar -xf /tmp/${file_name} -C ~/.local/bin/
-        chmod +x ~/.local/bin/k9s
-        rm -f /tmp/${file_name}
-        echo "Installed!"
+	echo "New version is ${online_ver} you have ${current_ver}"
+	file_name=$(echo $k9s_latest | awk -F'/' '{print $7}')
+	wget https://github.com${k9s_latest} -O /tmp/${file_name}
+	tar -xf /tmp/${file_name} -C ~/.local/bin/
+	chmod +x ~/.local/bin/k9s
+	rm -f /tmp/${file_name}
+	echo "Installed!"
     elif [[ $1 != "" ]]; then
-	      echo "Installing K9s version $1"
+	echo "Installing K9s version $1"
         if [[ $(echo $1 | awk -F'.' '{print $2}') < 27 ]]; then
-	          file_name="k9s_Linux_x86_64.tar.gz"
-	      else
-            file_name="k9s_Linux_amd64.tar.gz"
-	      fi
-        wget https://github.com/derailed/k9s/releases/download/${1}/${file_name}
+	    file_name="k9s_Linux_x86_64.tar.gz"
+	else
+	    file_name="k9s_Linux_amd64.tar.gz"
+	fi
+	wget https://github.com/derailed/k9s/releases/download/${1}/${file_name}
         tar -xf /tmp/${file_name} -C ~/.local/bin/
         chmod +x ~/.local/bin/k9s
         rm -f /tmp/${file_name}
-        echo "Installed!"
+	echo "Installed!"
     else
-	      echo "Nothing to do your version matches the online version! $1"
+	echo "Nothing to do your version matches the online version! $1"
     fi
 }
 
