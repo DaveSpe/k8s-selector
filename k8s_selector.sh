@@ -12,10 +12,13 @@ escape=$'\e[0m'
 
 function connect_cluster {
     cluster_list=()
-    aws_env=("dev" "qa" "prod")
+    aws_env=()
 
     # Generate cluster list 
     for each in $(ls ~/.kube/configs/); do cluster_list[${#cluster_list[@]}]=$each; done
+
+    # Generate profile list
+    for each in $(cat .aws/config | awk '/profile/ { print $2 }' | tr -d ']'); do aws_env[${#aws_env[@]}]=$each; done
 
     # Prompt for cluster selection
     for each in ${!cluster_list[@]}; do echo $blue $((each + 1))":" ${cluster_list[$each]/.yml/" "} $escape; done
@@ -28,8 +31,12 @@ function connect_cluster {
     read -p  "$yellow Which AWS environment would you like to connect to: $escape" assume_env
     assume_env=$((assume_env -1))
     source okta-assumerole ${aws_env[$assume_env]}
+    #aws sso login --profile "${aws_env[$assume_env]}" && export AWS_PROFILE="${aws_env[$assume_env]}"
 
-    # Run k9s with teh configuration
+    # Short pause to perform SSO login
+    # sleep 10
+
+    # Run k9s with configuration
     KUBECONFIG=~/.kube/configs/${cluster_list[$cluster_select]} k9s
 }
 
